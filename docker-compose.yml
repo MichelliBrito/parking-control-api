@@ -1,0 +1,36 @@
+version: '3.5'
+
+services:
+  db-school:
+    image: postgres:9.6
+    container_name: parking-control-db
+    restart: always
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: parking-control-db 
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./app/db/data:/var/lib/postgres/data
+  app:
+     container_name: parking-control-api
+     image: parking-control-api:1.0
+     restart: always
+     build: './parking-control-api'
+     ports:
+      - "8080:8080"
+     depends_on:
+      - parking-control-db
+  # portainer - para gerenciar graficamente os containers ativos    
+  portainer:
+     image: portainer/portainer-ce:2.0.0
+     container_name: portainer-io
+     command: -H unix:///var/run/docker.sock
+     restart: always
+     volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainer_data:/data
+     ports:
+      - "9000:9000"  #no browser localhost:9000 sobe o portainer.oi
+
