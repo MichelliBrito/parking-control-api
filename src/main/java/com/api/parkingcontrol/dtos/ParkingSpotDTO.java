@@ -7,6 +7,7 @@ import com.api.parkingcontrol.documentation.Documentation;
 import com.api.parkingcontrol.enums.Author;
 import com.api.parkingcontrol.enums.CustomStatus;
 
+
 @Documentation(doc = "insert field status on class", 
                author = Author.ivanSantos, 
                date = "08-02-2022")
@@ -36,8 +37,9 @@ public class ParkingSpotDTO {
 	    
 	@NotBlank
 	private String block;
+	
+	private Boolean active = true;
     
-	@NotBlank
 	private CustomStatus status = CustomStatus.NOT_INFORMED;
 
     public String getParkingSpotNumber() { return parkingSpotNumber; }
@@ -71,6 +73,10 @@ public class ParkingSpotDTO {
     public String getBlock() { return block; }
 
     public void setBlock(String block) { this.block = block; }
+
+	public Boolean getActive() { return active; }
+
+	public void setActive(Boolean active) { this.active = active; }
 
 	public CustomStatus getStatus() { return status; }
 

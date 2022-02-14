@@ -29,97 +29,98 @@ import com.api.parkingcontrol.enums.RequestMethod;
 import com.api.parkingcontrol.models.ParkingSpotModel;
 import com.api.parkingcontrol.services.ParkingSpotService;
 
-import io.swagger.annotations.ApiOperation;
-
 @RestController
 @RequestMapping(path = "/parking-spot")
 public class ParkingSpotController {
 
-    final ParkingSpotService parkingSpotService;
+	final ParkingSpotService parkingSpotService;
 
-    public ParkingSpotController(ParkingSpotService parkingSpotService) {
-        this.parkingSpotService = parkingSpotService;
-    }
+	public ParkingSpotController(ParkingSpotService parkingSpotService) {
+		this.parkingSpotService = parkingSpotService;
+	}
 
-    @Documentation(doc = "save parking spot", 
-		           author = Author.michelliBrito,
-		           api = @Request(method = RequestMethod.POST, url = "/parking-spot/save-parking-spot"),
-		           date = "07-02-2022")
-    @PostMapping(path  = "/save")
-    @ApiOperation(value = "save data")
-    public ResponseEntity<Object> saveParkingSpot(@RequestBody @Valid ParkingSpotDTO parkingSpotDto){
-        if(parkingSpotService.existsByLicensePlateCar(parkingSpotDto.getLicensePlateCar())){
-            return ResponseEntity.status(HttpStatus.CONFLICT).body("Conflict: License Plate Car is already in use!");
-        }
-        if(parkingSpotService.existsByParkingSpotNumber(parkingSpotDto.getParkingSpotNumber())){
-            return ResponseEntity.status(HttpStatus.CONFLICT).body("Conflict: Parking Spot is already in use!");
-        }
-        if(parkingSpotService.existsByApartmentAndBlock(parkingSpotDto.getApartment(), parkingSpotDto.getBlock())){
-            return ResponseEntity.status(HttpStatus.CONFLICT).body("Conflict: Parking Spot already registered for this apartment/block!");
-        }
-        ParkingSpotModel parkingSpotModel = new ParkingSpotModel();
-        BeanUtils.copyProperties(parkingSpotDto, parkingSpotModel);
-        parkingSpotModel.setStatus(CustomStatus.BUSY);
-        parkingSpotModel.setRegistrationDate(LocalDateTime.now(ZoneId.of("UTC")));
-        return ResponseEntity.status(HttpStatus.CREATED).body(parkingSpotService.save(parkingSpotModel));
-    }
+	@Documentation(doc = "save parking spot", 
+			author = Author.michelliBrito, 
+			api = @Request(method = RequestMethod.POST, 
+			url = "/parking-spot/save-parking-spot"), 
+			date = "07-02-2022")
+	@PostMapping(path = "/save")
+	public ResponseEntity<?> saveParkingSpot(@RequestBody @Valid ParkingSpotDTO parkingSpotDto) {
+		if (parkingSpotService.existsByLicensePlateCar(parkingSpotDto.getLicensePlateCar())) {
+			return ResponseEntity.status(HttpStatus.CONFLICT).body("Conflict: License Plate Car is already in use!");
+		}
+		if (parkingSpotService.existsByParkingSpotNumber(parkingSpotDto.getParkingSpotNumber())) {
+			return ResponseEntity.status(HttpStatus.CONFLICT).body("Conflict: Parking Spot is already in use!");
+		}
+		if (parkingSpotService.existsByApartmentAndBlock(parkingSpotDto.getApartment(), parkingSpotDto.getBlock())) {
+			return ResponseEntity.status(HttpStatus.CONFLICT)
+					.body("Conflict: Parking Spot already registered for this apartment/block!");
+		}
+		ParkingSpotModel parkingSpotModel = new ParkingSpotModel();
+		BeanUtils.copyProperties(parkingSpotDto, parkingSpotModel);
+		parkingSpotModel.setStatus(CustomStatus.BUSY);
+		parkingSpotModel.setActive(true);
+		parkingSpotModel.setRegistrationDate(LocalDateTime.now(ZoneId.of("UTC")));
+		return ResponseEntity.status(HttpStatus.CREATED).body(parkingSpotService.save(parkingSpotModel));
+	}
 
-    @Documentation(doc = "get all data", 
-	               author = Author.michelliBrito,
-	               api = @Request(method = RequestMethod.GET, url = "/parking-spot/get-all"),
-	               date = "07-02-2022") 
-    @GetMapping(path = "/get-all")
-    @ApiOperation(value = "list all data")
-    public ResponseEntity<List<ParkingSpotModel>> getAllParkingSpots(){
-        return ResponseEntity.status(HttpStatus.OK).body(parkingSpotService.findAll());
-    }
+	@Documentation(doc = "get all data", 
+			author = Author.michelliBrito, 
+			api = @Request(method = RequestMethod.GET, 
+			url = "/parking-spot/get-all"), date = "07-02-2022")
+	@GetMapping(path = "/get-all")
+	public ResponseEntity<List<ParkingSpotModel>> getAllParkingSpots() {
+		return ResponseEntity.status(HttpStatus.OK).body(parkingSpotService.findAll());
+	}
 
-    @Documentation(doc = "get one parking spot by ID", 
-	               author = Author.michelliBrito,
-	               api = @Request(method = RequestMethod.GET, url = "/parking-spot/id"),
-	               date = "07-02-2022")
-    @GetMapping(path =  "/parking-spot/{id}")
-    @ApiOperation(value = "get one data by ID")
-    public ResponseEntity<Object> getOneParkingSpot(@PathVariable(value = "id") UUID id){
-        Optional<ParkingSpotModel> parkingSpotModelOptional = parkingSpotService.findById(id);
-        if (!parkingSpotModelOptional.isPresent()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Parking Spot not found.");
-        }
-        return ResponseEntity.status(HttpStatus.OK).body(parkingSpotModelOptional.get());
-    }
+	@Documentation(doc = "get one parking spot by ID", 
+			author = Author.michelliBrito, api = @Request(method = RequestMethod.GET, 
+			url = "/parking-spot/id"), 
+			date = "07-02-2022")
+	@GetMapping(path = "/get-one/{id}")
+	public ResponseEntity<?> getOneParkingSpot(@PathVariable(value = "id") UUID id) {
+		Optional<ParkingSpotModel> parkingSpotModelOptional = parkingSpotService.findById(id);
+		if (!parkingSpotModelOptional.isPresent()) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Parking Spot not found.");
+		}
+		return ResponseEntity.status(HttpStatus.OK).body(parkingSpotModelOptional.get());
+	}
 
-    @Documentation(doc = "delete parking spot by ID", 
-	               author = Author.michelliBrito,
-	               api = @Request(method = RequestMethod.DELETE, url = "/parking-spot/delete/id"),
-	               date = "07-02-2022")
-    @DeleteMapping(path = "/parking-spot/delete/{id}")
-    @ApiOperation(value = "delete data by ID")
-    public ResponseEntity<Object> deleteParkingSpot(@PathVariable(value = "id") UUID id){
-        Optional<ParkingSpotModel> parkingSpotModelOptional = parkingSpotService.findById(id);
-        if (!parkingSpotModelOptional.isPresent()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Parking Spot not found.");
-        }
-        parkingSpotService.delete(parkingSpotModelOptional.get());
-        return ResponseEntity.status(HttpStatus.OK).body("Parking Spot deleted successfully.");
-    }
+	@Documentation(doc = "delete parking spot by ID", 
+			author = Author.michelliBrito, 
+			api = @Request(method = RequestMethod.DELETE, 
+			url = "/parking-spot/delete/id"), date = "07-02-2022")
+	@DeleteMapping(path = "/delete/{id}")
+	public ResponseEntity<?> deleteParkingSpot(@PathVariable(value = "id") UUID id) {
+		Optional<ParkingSpotModel> parkingSpotModelOptional = parkingSpotService.findById(id);
+		if (!parkingSpotModelOptional.isPresent()) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Parking Spot not found.");
+		}
+		parkingSpotService.delete(parkingSpotModelOptional.get());
+		return ResponseEntity.status(HttpStatus.OK).body("Parking Spot deleted successfully.");
+	}
 
-    @Documentation(doc = "update parking spot", 
-	           author = Author.michelliBrito,
-	           api = @Request(method = RequestMethod.POST, url = "/parking-spot/update/id"),
-	           date = "07-02-2022")
-    @PutMapping(path = "/parking-spot/update/{id}")
-    @ApiOperation(value = "update data")
-    public ResponseEntity<Object> updateParkingSpot(@PathVariable(value = "id") UUID id,
-                                                    @RequestBody @Valid ParkingSpotDTO parkingSpotDto){
-        Optional<ParkingSpotModel> parkingSpotModelOptional = parkingSpotService.findById(id);
-        if (!parkingSpotModelOptional.isPresent()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Parking Spot not found.");
-        }
-        ParkingSpotModel parkingSpotModel = new ParkingSpotModel();
-        BeanUtils.copyProperties(parkingSpotDto, parkingSpotModel);
-        parkingSpotModel.setId(parkingSpotModelOptional.get().getId());
-        parkingSpotModel.setRegistrationDate(parkingSpotModelOptional.get().getRegistrationDate());
-   
-        return ResponseEntity.status(HttpStatus.OK).body(parkingSpotService.save(parkingSpotModel));
-    }
+	@Documentation(doc = "status parking spot", 
+			author = Author.ivanSantos, 
+			api = @Request(method = RequestMethod.PUT, 
+			url = "/parking-spot/change-status/id/status"), 
+			date = "12-02-2022")
+	@PutMapping(path = "/change-status/{id}/{status}")
+	public ResponseEntity<?> statusSpot(@PathVariable(value = "id") UUID id, @PathVariable(value = "status") Boolean status) {
+		parkingSpotService.statusSpot(id,status);
+		return ResponseEntity.status(HttpStatus.OK).body("Change Parking Spot status successfully");
+	}
+
+	@Documentation(doc = "update parking spot", 
+			author = Author.ivanSantos, 
+			api = @Request(method = RequestMethod.POST, 
+			url = "/parking-spot/update/id"), 
+			date = "13-02-2022")
+	@PutMapping(path = "/update/{id}")
+	public ResponseEntity<?> updateParkingSpot(@PathVariable(value = "id") UUID id,
+			@RequestBody @Valid ParkingSpotDTO parkingSpotDto) {
+		ParkingSpotModel parkingSpot = parkingSpotService.updateParkingSpot(id, parkingSpotDto);
+		
+		return ResponseEntity.ok().body(parkingSpot);
+	}
 }

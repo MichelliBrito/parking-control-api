@@ -14,8 +14,6 @@ import com.api.parkingcontrol.documentation.Request;
 import com.api.parkingcontrol.enums.Author;
 import com.api.parkingcontrol.enums.RequestMethod;
 
-import io.swagger.annotations.ApiOperation;
-
 @RestController
 @RequestMapping(path = "/parking-spot")
 public class StatusController {
@@ -24,7 +22,6 @@ public class StatusController {
 			       author = Author.ivanSantos,
 			       date = "08-02-2022",
 			       api = @Request(method = RequestMethod.GET, url = "/parking-spot/status"))
-	@ApiOperation(value = "verify user and timestamp")
 	@GetMapping(path = "/status")
 	public ResponseEntity<?> status() throws UnknownHostException {
 		String status = "TimeStamp: " + new Date(System.currentTimeMillis()) + 

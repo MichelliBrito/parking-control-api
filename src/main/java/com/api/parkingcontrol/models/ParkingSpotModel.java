@@ -45,11 +45,11 @@ public class ParkingSpotModel implements Serializable {
     private String block;
     
     @Column(nullable = false)
-    private boolean active = true;
+    private Boolean active = true;
     
-    @Column
+    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private CustomStatus status = CustomStatus.NOT_INFORMED;
+    private CustomStatus status;
     
     public UUID getId() { return id; }
 
@@ -95,7 +95,7 @@ public class ParkingSpotModel implements Serializable {
 
 	public void setStatus(CustomStatus status) { this.status = status; }
 
-	public boolean isActive() { return active; }
+	public Boolean getActive() { return active; }
 
 	public void setActive(boolean active) { this.active = active; }
 
