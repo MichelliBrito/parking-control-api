@@ -64,7 +64,7 @@ public class ParkingSpotController {
 		return ResponseEntity.status(HttpStatus.CREATED).body(parkingSpotService.save(parkingSpotModel));
 	}
 
-	@Documentation(doc = "get all data", 
+	@Documentation(doc = "get all data actives/busy", 
 			author = Author.michelliBrito, 
 			api = @Request(method = RequestMethod.GET, 
 			url = "/parking-spot/get-all"), date = "07-02-2022")
