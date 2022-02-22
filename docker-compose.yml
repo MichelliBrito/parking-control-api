@@ -1,35 +1,37 @@
-version: '3.5'
-
+version: '3'
 services:
-  parking-control-db:
-    image: postgres:9.6
-    container_name: parking-control-db
+  app:
+    image: parking-control-api:1.0
+    container_name: parking-spot
+    build:
+      context: .
+    ports:
+      - "8080:8080"
+    depends_on:
+      - parking-spot-db
     restart: always
     environment:
-      POSTGRES_USER: admin
-      POSTGRES_PASSWORD: admin
-      POSTGRES_DB: parking-control-db 
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=12345
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://localhost:5432/parking-control-db
+  parking-spot-db:
+    image: postgres:9.6
+    restart: always
+    container_name: parking-spot-db
+    volumes:
+    - C:\Docker\PostgreSql\data:/var/lib/postgresql/data
     ports:
-      - "5432:5432"
-      
-  app:
-     container_name: parking-control-api
-     image: parking-control-api:1.0
-     restart: always
-     build: 
-        context: .
-     ports:
-      - "8080:8080"
-     depends_on:
-       - parking-control-db
-      
+      - "9001:9001"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=parking-spot-db
   portainer:
-     image: portainer/portainer-ce:2.0.0
-     container_name: portainer-io
-     command: -H unix:///var/run/docker.sock
-     restart: always
-     volumes:
+    image: portainer/portainer-ce:2.11.1
+    container_name: portainer-io
+    command: -H unix:///var/run/docker.sock
+    restart: always
+    volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-     ports:
+    ports:
       - "9000:9000"
-

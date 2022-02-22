@@ -58,9 +58,11 @@ public class ParkingSpotController {
 		}
 		ParkingSpotModel parkingSpotModel = new ParkingSpotModel();
 		BeanUtils.copyProperties(parkingSpotDto, parkingSpotModel);
+		parkingSpotModel.setParkingSpotNumber(parkingSpotService.generateNumber(parkingSpotModel));
 		parkingSpotModel.setStatus(CustomStatus.BUSY);
 		parkingSpotModel.setActive(true);
 		parkingSpotModel.setRegistrationDate(LocalDateTime.now(ZoneId.of("UTC")));
+		
 		return ResponseEntity.status(HttpStatus.CREATED).body(parkingSpotService.save(parkingSpotModel));
 	}
 
@@ -72,9 +74,41 @@ public class ParkingSpotController {
 	public ResponseEntity<List<ParkingSpotModel>> getAllParkingSpots() {
 		return ResponseEntity.status(HttpStatus.OK).body(parkingSpotService.findAll());
 	}
+	
+	@Documentation(doc = "find all data inactives/free", 
+			author = Author.ivanSantos, 
+			api = @Request(method = RequestMethod.GET, 
+			url = "/parking-spot/get-inactives"), date = "17-02-2022")
+	@GetMapping(path = "/get-inactives")
+	public ResponseEntity<List<ParkingSpotModel>> getInactivesParkingSpots() {
+		return ResponseEntity.status(HttpStatus.OK).body(parkingSpotService.findInactives());
+	}
+	
+	@Documentation(doc = "find out parking spot by spot number", 
+			author = Author.ivanSantos, 
+			api = @Request(method = RequestMethod.GET, 
+			url = "/parking-spot/find-parking/spot_number"), date = "22-02-2022")
+	@GetMapping(path = "/find-parking/{spotNumber}")
+	public ResponseEntity<List<ParkingSpotModel>> findParkingSpotNumber(
+			@PathVariable(value = "spotNumber", required = true) String spotNumber) {
+		List<ParkingSpotModel> listSpotNumber = parkingSpotService.findParkingSpotNumber(spotNumber.toUpperCase());
+		return ResponseEntity.ok().body(listSpotNumber);
+	}
+	
+	@Documentation(doc = "find out parking spot by owner name", 
+			author = Author.ivanSantos, 
+			api = @Request(method = RequestMethod.GET, 
+			url = "/parking-spot/find-parking/ownerName"), date = "22-02-2022")
+	@GetMapping(path = "/find-owner/{ownerName}")
+	public ResponseEntity<List<ParkingSpotModel>> findOutOwnerName(
+			@PathVariable(value = "ownerName", required = true) String ownerName) {
+		List<ParkingSpotModel> listOwnerName = parkingSpotService.findOwnerName(ownerName.toUpperCase());
+		return ResponseEntity.ok().body(listOwnerName);
+	}
 
 	@Documentation(doc = "get one parking spot by ID", 
-			author = Author.michelliBrito, api = @Request(method = RequestMethod.GET, 
+			author = Author.michelliBrito, 
+			api = @Request(method = RequestMethod.GET, 
 			url = "/parking-spot/id"), 
 			date = "07-02-2022")
 	@GetMapping(path = "/get-one/{id}")
@@ -89,7 +123,8 @@ public class ParkingSpotController {
 	@Documentation(doc = "delete parking spot by ID", 
 			author = Author.michelliBrito, 
 			api = @Request(method = RequestMethod.DELETE, 
-			url = "/parking-spot/delete/id"), date = "07-02-2022")
+			url = "/parking-spot/delete/id"), 
+			date = "07-02-2022")
 	@DeleteMapping(path = "/delete/{id}")
 	public ResponseEntity<?> deleteParkingSpot(@PathVariable(value = "id") UUID id) {
 		Optional<ParkingSpotModel> parkingSpotModelOptional = parkingSpotService.findById(id);
@@ -106,9 +141,9 @@ public class ParkingSpotController {
 			url = "/parking-spot/change-status/id/status"), 
 			date = "12-02-2022")
 	@PutMapping(path = "/change-status/{id}/{status}")
-	public ResponseEntity<?> statusSpot(@PathVariable(value = "id") UUID id, @PathVariable(value = "status") Boolean status) {
-		parkingSpotService.statusSpot(id,status);
-		return ResponseEntity.status(HttpStatus.OK).body("Change Parking Spot status successfully");
+	public ResponseEntity<ParkingSpotModel> statusSpot(@PathVariable(value = "id") UUID id, @PathVariable(value = "status") Boolean status) {
+	
+		return ResponseEntity.status(HttpStatus.OK).body(parkingSpotService.statusSpot(id,status));
 	}
 
 	@Documentation(doc = "update parking spot", 

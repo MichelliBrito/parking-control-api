@@ -13,7 +13,6 @@ import com.api.parkingcontrol.enums.CustomStatus;
                date = "08-02-2022")
 public class ParkingSpotDTO {
 
-    @NotBlank
     private String parkingSpotNumber;
 	    
     @NotBlank

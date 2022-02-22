@@ -16,14 +16,14 @@ import com.api.parkingcontrol.enums.RequestMethod;
 
 @RestController
 @RequestMapping(path = "/parking-spot")
-public class StatusController {
+public class ConnectionController {
 
 	@Documentation(doc = "verify status {user} and {timestamp}", 
 			       author = Author.ivanSantos,
 			       date = "08-02-2022",
 			       api = @Request(method = RequestMethod.GET, url = "/parking-spot/status"))
-	@GetMapping(path = "/status")
-	public ResponseEntity<?> status() throws UnknownHostException {
+	@GetMapping(path = "/connection")
+	public ResponseEntity<String> status() throws UnknownHostException {
 		String status = "TimeStamp: " + new Date(System.currentTimeMillis()) + 
 						"\n\tAddress: "+InetAddress.getLocalHost();
 		return ResponseEntity.ok().body(status);
