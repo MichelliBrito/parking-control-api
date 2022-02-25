@@ -13,19 +13,19 @@ services:
     environment:
       - SPRING_DATASOURCE_USERNAME=postgres
       - SPRING_DATASOURCE_PASSWORD=12345
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://localhost:5432/parking-control-db
-  parking-spot-db:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://localhost:9001/parking-control-db
+  parking-control-db:
     image: postgres:9.6
     restart: always
-    container_name: parking-spot-db
+    container_name: parking-control-db
     volumes:
-    - C:\Docker\PostgreSql\data:/var/lib/postgresql/data
+      - C:\Docker\PostgreSql\data:/var/lib/postgresql/data
     ports:
       - "9001:9001"
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=parking-spot-db
+      - POSTGRES_DB=parking-control-db
   portainer:
     image: portainer/portainer-ce:2.11.1
     container_name: portainer-io
