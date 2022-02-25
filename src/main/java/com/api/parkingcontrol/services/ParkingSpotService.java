@@ -135,7 +135,7 @@ public class ParkingSpotService {
 		UUID key = UUID.randomUUID();
 		String accessKey = null;
 		if (psm.getParkingSpotNumber() == null) {
-			accessKey = key.toString().substring(0, 8).toUpperCase();
+			accessKey = key.toString().substring(0, 10).toUpperCase();
 		}
 		return accessKey;
 	}
