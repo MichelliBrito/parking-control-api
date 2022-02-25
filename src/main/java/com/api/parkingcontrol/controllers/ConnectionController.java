@@ -21,7 +21,7 @@ public class ConnectionController {
 	@Documentation(doc = "verify status {user} and {timestamp}", 
 			       author = Author.ivanSantos,
 			       date = "08-02-2022",
-			       api = @Request(method = RequestMethod.GET, url = "/parking-spot/status"))
+			       api = @Request(method = RequestMethod.GET, url = "/parking-spot/connection"))
 	@GetMapping(path = "/connection")
 	public ResponseEntity<String> status() throws UnknownHostException {
 		String status = "TimeStamp: " + new Date(System.currentTimeMillis()) + 
