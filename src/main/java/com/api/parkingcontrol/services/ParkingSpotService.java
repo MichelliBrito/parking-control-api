@@ -58,11 +58,11 @@ public class ParkingSpotService {
 	}
 	
 	@Documentation(doc = "list inactives parking spot", author = Author.ivanSantos, date = "17-02-2022")
-	public List<ParkingSpotModel> findInactives() {
+	public List<ParkingSpotModel> findDeactivates() {
 		return parkingSpotRepository
 				.findAll().stream()
 				.filter(d -> d.getStatus().equals(CustomStatus.FREE))
-				.filter(e->e.getActive() == false)
+				.filter(e->!e.getActive())
 				.collect(Collectors.toList());
 	}
 

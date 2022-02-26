@@ -80,8 +80,8 @@ public class ParkingSpotController {
 			api = @Request(method = RequestMethod.GET, 
 			url = "/parking-spot/get-inactives"), date = "17-02-2022")
 	@GetMapping(path = "/get-inactives")
-	public ResponseEntity<List<ParkingSpotModel>> getInactivesParkingSpots() {
-		return ResponseEntity.status(HttpStatus.OK).body(parkingSpotService.findInactives());
+	public ResponseEntity<List<ParkingSpotModel>> getDeactivetesParkingSpots() {
+		return ResponseEntity.status(HttpStatus.OK).body(parkingSpotService.findDeactivates());
 	}
 	
 	@Documentation(doc = "find out parking spot by spot number", 
